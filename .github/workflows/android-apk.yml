@@ -13,18 +13,6 @@ jobs:
           node-version: 22
       - run: npm install
       - run: npx expo prebuild --platform android --no-install
-      - name: Embed JavaScript bundle in debug APK
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path("android/app/build.gradle")
-          s = p.read_text()
-          old = 'debuggableVariants = ["debug"]'
-          if old not in s:
-              raise SystemExit("Could not find React Native debuggableVariants setting in android/app/build.gradle")
-          p.write_text(s.replace(old, "debuggableVariants = []"))
-          print("Configured debug variant to embed the JavaScript bundle.")
-          PY
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -34,11 +22,15 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_HOME"
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platform-tools" "platforms;android-36" "build-tools;36.0.0"
-      - name: Build debug APK with embedded JavaScript
+      - name: Build standalone release APK
         working-directory: android
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleRelease
+      - name: Verify APK contains bundled application
+        run: |
+          test -s android/app/build/outputs/apk/release/app-release.apk
+          ls -lh android/app/build/outputs/apk/release/app-release.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: discover-belarus-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: discover-belarus-android-release
+          path: android/app/build/outputs/apk/release/app-release.apk
           retention-days: 30
