@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "DISCOVER BELARUS",
+    "slug": "discover-belarus",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "android": {
+      "package": "by.discoverbelarus.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#F7F7F1"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "by.discoverbelarus.app"
+    }
+  }
+}
